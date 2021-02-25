@@ -47,7 +47,7 @@ import java.util.Scanner;
                     }
                 }
                 // anropa stored procedure så att produkten läggs i beställningen.
-                List<ShoesInStock> orderedShoes = new ArrayList<ShoesInStock>();
+                List<ShoesInStock> orderedShoes = new ArrayList<>();
 
                 if (ordId != null) {
                     r.addToCart_Proc(custId,ordId,allShoes.get(inputOrder-1).shoeId);
@@ -55,28 +55,22 @@ import java.util.Scanner;
                     System.out.println(ordId);
                 }
                 else {
-                    ordId = r.addToCart_Func(custId, ordId, allShoes.get(inputOrder - 1).shoeId);
+                    ordId = r.addToCart_Func(custId, -1, allShoes.get(inputOrder - 1).shoeId);
                     for(Orders o: r.getAllOrders()) {
                         if (o.id == ordId) {
                             orderedShoes = r.getAllShoesByOrderId(ordId);
                         }
                     }
 
-                    System.out.println(orderedShoes.toString());
-
-                    System.out.println(ordId);
-
                 }
                 // användaren får återkoppling om det gick bra eller om ett fel uppstod när produkten lades till
                 System.out.println("Your order was added successfully.");
+                System.out.println();
                 //användaren ska kunna välja att skriva ut alla produkter som ingår i beställningen
                 System.out.println("You have following items in your cart:");
                 for (ShoesInStock sh: orderedShoes) {
                     System.out.println("Brand:" + sh.brandName + ", size: " + sh.size + ", color: " + sh.color);
                 }
-
-
-
 
                 break;
 

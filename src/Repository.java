@@ -23,9 +23,7 @@ public class Repository {
         try {
             p.load(new FileInputStream("src/settings.properties"));
             Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -89,7 +87,7 @@ public class Repository {
         return allCustomers;
     }
 
-
+    // get all orders
     public List<Orders> getAllOrders() {
         List<Orders> allOrders = new ArrayList<>();
 
@@ -201,6 +199,7 @@ public class Repository {
 
     }
 */
+    //get all shoes by order id
     public List<ShoesInStock> getAllShoesByOrderId(int orderId) {
 
         List<ShoesInStock> allShoesById = new ArrayList<>();
@@ -242,7 +241,7 @@ public class Repository {
         return allShoesById;
     }
 
-    // AddToCart_Func
+    // AddToCart Function, returns integer
     public Integer addToCart_Func(int customerId, Integer orderId, int shoeId) {
 
         int result = 0;
@@ -252,44 +251,22 @@ public class Repository {
                 p.getProperty("name"),
                 p.getProperty("password"));
              CallableStatement stmt = con.prepareCall(query)) {
-                stmt.registerOutParameter(1, Types.INTEGER);
-                stmt.setInt(2, customerId);
-                stmt.setInt(3, orderId);
-                stmt.setInt(4, shoeId);
-
-                stmt.execute();
-
-                result = stmt.getInt(1);
-
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setInt(2, customerId);
+            stmt.setNull(3, orderId);
+            stmt.setInt(4, shoeId);
 
             stmt.execute();
-        }
 
-        // why catch is not working?
-        catch (SQLException e) {
-            if (con != null) {
-                try {
-                    System.out.print("Transaction is being rolled back");
-                    con.rollback();
-                } catch (SQLException e2) {
-                    System.out.println(e2.getMessage());
-                }
+        } catch(Exception throwables){
+                throwables.printStackTrace();
             }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            if (con != null) {
-                try {
-                    System.out.print("Transaction is being rolled back");
-                    con.rollback();
-                } catch (SQLException e2) {
-                    System.out.println(e2.getMessage());
-                }
-            }
-        }
 
         return result;
-    }
+        }
 
+
+    // AddToCArt Procedure,
     public Integer addToCart_Proc(int customerId, Integer orderId, int shoeId) {
 
         ResultSet rs = null;
@@ -304,28 +281,8 @@ public class Repository {
             stmt.setInt(2, orderId);
             stmt.setInt(3, shoeId);
             rs = stmt.executeQuery();
-        }
-
-        // why catch is not working?
-        catch (SQLException e) {
-            if (con != null) {
-                try {
-                    System.out.print("Transaction is being rolled back");
-                    con.rollback();
-                } catch (SQLException e2) {
-                    System.out.println(e2.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            if (con != null) {
-                try {
-                    System.out.print("Transaction is being rolled back");
-                    con.rollback();
-                } catch (SQLException e2) {
-                    System.out.println(e2.getMessage());
-                }
-            }
+        } catch (Exception throwables) {
+            throwables.printStackTrace();
         }
 
         return orderId;
@@ -370,7 +327,7 @@ public class Repository {
                     "and color.colorName = " + color +
                     "and shoes.shoeStock >= " + amount + ";");
 
-            int totalRows = 0;
+            int totalRows;
             rs.last();
             totalRows = rs.getRow();
             if (totalRows > 0) {
@@ -384,8 +341,6 @@ public class Repository {
         }
         return result;
     }
-
-
 
     public boolean UserExists(String userName, String password) {
         boolean result = false;
